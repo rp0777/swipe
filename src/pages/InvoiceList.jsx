@@ -23,6 +23,8 @@ const InvoiceList = () => {
     }
   };
 
+  console.log(invoiceList);
+
   return (
     <Row>
       <Col className="mx-auto" xs={12} md={8} lg={9}>
@@ -41,6 +43,12 @@ const InvoiceList = () => {
                 <h3 className="fw-bold pb-2 pb-md-4">Invoice List</h3>
                 <Link to="/create">
                   <Button variant="primary mb-2 mb-md-4">Create Invoice</Button>
+                </Link>
+
+                <Link to="/update">
+                  <Button variant="primary mb-2 mb-md-4">
+                    Update Invoices
+                  </Button>
                 </Link>
 
                 <div className="d-flex gap-2">
@@ -63,6 +71,9 @@ const InvoiceList = () => {
               <Table responsive>
                 <thead>
                   <tr>
+                    <th className="text-center">
+                      <input type="checkbox" />
+                    </th>
                     <th>Invoice No.</th>
                     <th>Bill To</th>
                     <th>Due Date</th>
@@ -111,6 +122,9 @@ const InvoiceRow = ({ invoice, navigate }) => {
 
   return (
     <tr>
+      <td className="text-center">
+        <input type="checkbox" />
+      </td>
       <td>{invoice.invoiceNumber}</td>
       <td className="fw-normal">{invoice.billTo}</td>
       <td className="fw-normal">{invoice.dateOfIssue}</td>
