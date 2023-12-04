@@ -1,40 +1,39 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useInvoiceListData } from "../redux/hooks";
-import { updateInvoices } from "../redux/invoicesSlice";
+import { selectInvoiceList, updateInvoices } from "../redux/invoicesSlice";
 import { Button, Card, Table } from "react-bootstrap";
 import { BiArrowBack } from "react-icons/bi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const InvoicesUpdateSheet = () => {
   const dispatch = useDispatch();
+  const selectedInvoices = useSelector(selectInvoiceList);
   const { invoiceList } = useInvoiceListData();
-  const editableInvoiceList = [...invoiceList];
+  // const editableInvoiceList = [...invoiceList];
+  const editableInvoiceList = [...selectedInvoices];
 
+  // Function to handle the input whenvene a value is changed for each property of invoices.
   const handleInput = (event, invoiceNumber) => {
     const property = event.target.getAttribute("data-property");
 
     const index = editableInvoiceList.findIndex(
-      (element) => element.id === invoiceNumber
+      (element) => element.invoiceNumber === invoiceNumber
     );
 
-    if (!index) {
+    if (index !== -1) {
       editableInvoiceList[index] = {
         ...editableInvoiceList[index],
-        [property]: event.target.value,
+        [property]: event.target.innerText,
       };
     }
-    console.log(editableInvoiceList[index]);
   };
 
   const handleUpdate = () => {
     dispatch(updateInvoices(editableInvoiceList));
-
     console.log(invoiceList);
     alert("Invoices updated successfuly 🥳");
   };
-
-  console.log(editableInvoiceList);
 
   return (
     <React.Fragment>
@@ -171,14 +170,5 @@ const InvoicesUpdateSheet = () => {
     </React.Fragment>
   );
 };
-
-// const editableInvoiceRow = ({ invoice }) => {
-//   console.log(invoice);
-//   return (
-//     <tr>
-//       <td>I am a citizen </td>
-//     </tr>
-//   );
-// };
 
 export default InvoicesUpdateSheet;

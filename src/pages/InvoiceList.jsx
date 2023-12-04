@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Card, Col, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { BiSolidPencil, BiTrash } from "react-icons/bi";
@@ -6,14 +6,24 @@ import { BsEyeFill } from "react-icons/bs";
 import InvoiceModal from "../components/InvoiceModal";
 import { useNavigate } from "react-router-dom";
 import { useInvoiceListData } from "../redux/hooks";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteInvoice } from "../redux/invoicesSlice";
+import {
+  selectInvoiceList,
+  selectInvoice,
+  removeInvoice,
+  clearSelectedInvoices,
+} from "../redux/selectedInvoicesSlice";
 
 const InvoiceList = () => {
   const { invoiceList, getOneInvoice } = useInvoiceListData();
   const isListEmpty = invoiceList.length === 0;
   const [copyId, setCopyId] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // const [selectedInvoices, setSelectedInvoices] = useState([]);
+
   const handleCopyClick = () => {
     const invoice = getOneInvoice(copyId);
     if (!invoice) {
@@ -22,6 +32,14 @@ const InvoiceList = () => {
       navigate(`/create/${copyId}`);
     }
   };
+
+  // const handleUpdateInvoices = () => {
+  //   if (selectedInvoices.length === 0) {
+  //     alert("Please select atleast one invoice to update.");
+  //   } else {
+  //     navigate(`/update`);
+  //   }
+  // };
 
   console.log(invoiceList);
 
@@ -103,6 +121,12 @@ const InvoiceRow = ({ invoice, navigate }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
 
+  const selectedInvoices = useSelector(selectInvoiceList);
+
+  useEffect(() => {
+    console.log("Updated selectedInvoices:", selectedInvoices);
+  }, [selectedInvoices]);
+
   const handleDeleteClick = (invoiceId) => {
     dispatch(deleteInvoice(invoiceId));
   };
@@ -120,10 +144,24 @@ const InvoiceRow = ({ invoice, navigate }) => {
     setIsOpen(false);
   };
 
+  const handleCheckedInvoices = (invoice, isChecked) => {
+    if (isChecked) {
+      // Checkbox is checked, add the invoice to selectedInvoices
+      dispatch(selectInvoice(invoice));
+    } else {
+      // Checkbox is unchecked, remove the invoice from selectedInvoices
+      dispatch(removeInvoice(invoice));
+    }
+    console.log(invoice);
+  };
+
   return (
     <tr>
       <td className="text-center">
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          onChange={(e) => handleCheckedInvoices(invoice, e.target.checked)}
+        />
       </td>
       <td>{invoice.invoiceNumber}</td>
       <td className="fw-normal">{invoice.billTo}</td>
