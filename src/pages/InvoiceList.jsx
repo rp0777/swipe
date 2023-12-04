@@ -12,7 +12,6 @@ import {
   selectInvoiceList,
   selectInvoice,
   removeInvoice,
-  clearSelectedInvoices,
 } from "../redux/selectedInvoicesSlice";
 
 const InvoiceList = () => {
@@ -20,7 +19,6 @@ const InvoiceList = () => {
   const isListEmpty = invoiceList.length === 0;
   const [copyId, setCopyId] = useState("");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   // const [selectedInvoices, setSelectedInvoices] = useState([]);
 
