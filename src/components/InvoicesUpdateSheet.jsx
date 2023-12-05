@@ -2,11 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useInvoiceListData } from "../redux/hooks";
 import { updateInvoices } from "../redux/invoicesSlice";
-import { Button, Card, Table } from "react-bootstrap";
+import { Form, Button, Card, Table } from "react-bootstrap";
 import { BiArrowBack } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { clearSelectedInvoices } from "../redux/selectedInvoicesSlice";
+import { deselectAllInvoices } from "../redux/selectedInvoicesSlice";
 
 const InvoicesUpdateSheet = () => {
   const dispatch = useDispatch();
@@ -14,6 +14,11 @@ const InvoicesUpdateSheet = () => {
   const selectedInvoices = useSelector((state) => state.selectedInvoices);
   const { invoiceList } = useInvoiceListData();
   const editableInvoiceList = JSON.parse(JSON.stringify(selectedInvoices));
+
+  const handleGoBack = () => {
+    dispatch(deselectAllInvoices());
+    navigate(`/`);
+  };
 
   const handleInput = (event, invoiceNumber) => {
     const property = event.target.getAttribute("data-property");
@@ -25,7 +30,10 @@ const InvoicesUpdateSheet = () => {
     if (index !== -1) {
       editableInvoiceList[index] = {
         ...editableInvoiceList[index],
-        [property]: event.target.innerText,
+        [property]:
+          property === "dateOfIssue"
+            ? event.target.value
+            : event.target.innerText,
       };
     }
   };
@@ -46,7 +54,7 @@ const InvoicesUpdateSheet = () => {
       return originalInvoice;
     });
     dispatch(updateInvoices(updatedList));
-    dispatch(clearSelectedInvoices());
+    dispatch(deselectAllInvoices());
     alert("Invoices updated successfuly 🥳");
     navigate(`/`);
   };
@@ -56,9 +64,7 @@ const InvoicesUpdateSheet = () => {
       <div className="d-flex align-items-center">
         <BiArrowBack size={18} />
         <div className="fw-bold mt-1 mx-2 cursor-pointer">
-          <Link to="/">
-            <h5>Go Back</h5>
-          </Link>
+          <h5 onClick={handleGoBack}>Go Back</h5>
         </div>
       </div>
 
@@ -105,23 +111,22 @@ const InvoicesUpdateSheet = () => {
               <tr>
                 <td className="text-center">{invoice.invoiceNumber}</td>
                 <td className="text-center">{invoice.id}</td>
-                <td
-                  className="text-center"
-                  contentEditable="true"
-                  data-property="dateOfIssue"
-                  onInput={(e, invoiceNumber) =>
-                    handleInput(e, invoice.invoiceNumber)
-                  }
-                >
-                  {invoice.dateOfIssue}
+                <td>
+                  <Form.Control
+                    type="date"
+                    data-property="dateOfIssue"
+                    value={invoice.dateOfIssue}
+                    name="dateOfIssue"
+                    onChange={(e) => handleInput(e, invoice.invoiceNumber)}
+                    style={{ maxWidth: "150px", margin: "auto" }}
+                    required
+                  />
                 </td>
                 <td
                   className="text-center"
                   contentEditable="true"
                   data-property="billTo"
-                  onInput={(e, invoiceNumber) =>
-                    handleInput(e, invoice.invoiceNumber)
-                  }
+                  onInput={(e) => handleInput(e, invoice.invoiceNumber)}
                 >
                   {invoice.billTo}
                 </td>
@@ -129,9 +134,7 @@ const InvoicesUpdateSheet = () => {
                   className="text-center"
                   contentEditable="true"
                   data-property="billToEmail"
-                  onInput={(e, invoiceNumber) =>
-                    handleInput(e, invoice.invoiceNumber)
-                  }
+                  onInput={(e) => handleInput(e, invoice.invoiceNumber)}
                 >
                   {invoice.billToEmail}
                 </td>
@@ -139,9 +142,7 @@ const InvoicesUpdateSheet = () => {
                   className="text-center"
                   contentEditable="true"
                   data-property="billToAddress"
-                  onInput={(e, invoiceNumber) =>
-                    handleInput(e, invoice.invoiceNumber)
-                  }
+                  onInput={(e) => handleInput(e, invoice.invoiceNumber)}
                 >
                   {invoice.billToAddress}
                 </td>
@@ -149,9 +150,7 @@ const InvoicesUpdateSheet = () => {
                   className="text-center"
                   contentEditable="true"
                   data-property="billFrom"
-                  onInput={(e, invoiceNumber) =>
-                    handleInput(e, invoice.invoiceNumber)
-                  }
+                  onInput={(e) => handleInput(e, invoice.invoiceNumber)}
                 >
                   {invoice.billFrom}
                 </td>
@@ -159,9 +158,7 @@ const InvoicesUpdateSheet = () => {
                   className="text-center"
                   contentEditable="true"
                   data-property="billFromEmail"
-                  onInput={(e, invoiceNumber) =>
-                    handleInput(e, invoice.invoiceNumber)
-                  }
+                  onInput={(e) => handleInput(e, invoice.invoiceNumber)}
                 >
                   {invoice.billFromEmail}
                 </td>
@@ -169,9 +166,7 @@ const InvoicesUpdateSheet = () => {
                   className="text-center"
                   contentEditable="true"
                   data-property="billFromAddress"
-                  onInput={(e, invoiceNumber) =>
-                    handleInput(e, invoice.invoiceNumber)
-                  }
+                  onInput={(e) => handleInput(e, invoice.invoiceNumber)}
                 >
                   {invoice.billFromAddress}
                 </td>

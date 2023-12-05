@@ -6,7 +6,7 @@ import { BsEyeFill } from "react-icons/bs";
 import InvoiceModal from "../components/InvoiceModal";
 import { useNavigate } from "react-router-dom";
 import { useInvoiceListData } from "../redux/hooks";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteInvoice } from "../redux/invoicesSlice";
 import { selectInvoice, removeInvoice } from "../redux/selectedInvoicesSlice";
 
@@ -16,12 +16,22 @@ const InvoiceList = () => {
   const [copyId, setCopyId] = useState("");
   const navigate = useNavigate();
 
+  const selectedInvoices = useSelector((state) => state.selectedInvoices);
+
   const handleCopyClick = () => {
     const invoice = getOneInvoice(copyId);
     if (!invoice) {
       alert("Please enter the valid invoice id.");
     } else {
       navigate(`/create/${copyId}`);
+    }
+  };
+
+  const handleUpdateInvoices = () => {
+    if (selectedInvoices.length !== 0) {
+      navigate(`/update`);
+    } else {
+      alert("Please select atleast one invoice to update.");
     }
   };
 
@@ -45,11 +55,12 @@ const InvoiceList = () => {
                   <Button variant="primary mb-2 mb-md-4">Create Invoice</Button>
                 </Link>
 
-                <Link to="/update">
-                  <Button variant="primary mb-2 mb-md-4">
-                    Update Invoices
-                  </Button>
-                </Link>
+                <Button
+                  variant="primary mb-2 mb-md-4"
+                  onClick={handleUpdateInvoices}
+                >
+                  Update Invoices
+                </Button>
 
                 <div className="d-flex gap-2">
                   <Button variant="dark mb-2 mb-md-4" onClick={handleCopyClick}>
@@ -71,9 +82,7 @@ const InvoiceList = () => {
               <Table responsive>
                 <thead>
                   <tr>
-                    <th className="text-center">
-                      <input type="checkbox" />
-                    </th>
+                    <th className="text-center">Select</th>
                     <th>Invoice No.</th>
                     <th>Bill To</th>
                     <th>Due Date</th>

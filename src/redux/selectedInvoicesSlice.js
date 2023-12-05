@@ -10,13 +10,13 @@ const selectedInvoicesSlice = createSlice({
     removeInvoice: (state, action) => {
       return state.filter((invoice) => invoice.id !== action.payload);
     },
-    clearSelectedInvoices: (state, action) => {
+    deselectAllInvoices: (state, action) => {
       return [];
     },
   },
 });
 
-export const { selectInvoice, removeInvoice, clearSelectedInvoices } =
+export const { selectInvoice, removeInvoice, deselectAllInvoices } =
   selectedInvoicesSlice.actions;
 
 export const selectInvoiceList = (state) => state.selectedInvoices;
