@@ -1,19 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useInvoiceListData } from "../redux/hooks";
-import { selectInvoiceList, updateInvoices } from "../redux/invoicesSlice";
+import { updateInvoices } from "../redux/invoicesSlice";
 import { Button, Card, Table } from "react-bootstrap";
 import { BiArrowBack } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { clearSelectedInvoices } from "../redux/selectedInvoicesSlice";
 
 const InvoicesUpdateSheet = () => {
   const dispatch = useDispatch();
-  const selectedInvoices = useSelector(selectInvoiceList);
+  const navigate = useNavigate();
+  const selectedInvoices = useSelector((state) => state.selectedInvoices);
   const { invoiceList } = useInvoiceListData();
-  // const editableInvoiceList = [...invoiceList];
-  const editableInvoiceList = [...selectedInvoices];
+  const editableInvoiceList = JSON.parse(JSON.stringify(selectedInvoices));
 
-  // Function to handle the input whenvene a value is changed for each property of invoices.
   const handleInput = (event, invoiceNumber) => {
     const property = event.target.getAttribute("data-property");
 
@@ -30,9 +31,24 @@ const InvoicesUpdateSheet = () => {
   };
 
   const handleUpdate = () => {
-    dispatch(updateInvoices(editableInvoiceList));
-    console.log(invoiceList);
+    const updatedList = invoiceList.map((originalInvoice) => {
+      const editableInvoice = editableInvoiceList.find(
+        (editable) => editable.invoiceNumber === originalInvoice.invoiceNumber
+      );
+
+      if (editableInvoice) {
+        return {
+          ...originalInvoice,
+          ...editableInvoice,
+        };
+      }
+
+      return originalInvoice;
+    });
+    dispatch(updateInvoices(updatedList));
+    dispatch(clearSelectedInvoices());
     alert("Invoices updated successfuly 🥳");
+    navigate(`/`);
   };
 
   return (
